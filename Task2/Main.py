@@ -14,27 +14,14 @@ tablename= pd.read_sql_query(tablename_query, conn)
 df_query = f"SELECT * FROM {tablename.iloc[0,0]};"
 df= pd.read_sql_query(df_query, conn)
 
-
-# print (df)
 # Data processing
 df_cleaned, scaler= preprocess.preprocess_data(df)
+# prepare dataset used for ml
 
-print("Finding correlation")
-corr= df_cleaned.corr()
-print("Step 3: Extracting correlations for 'final_test'...")
-final_test_corr = corr['final_test']
-print("Step 4: Sorting correlations by absolute value...")
-sorted_corr = final_test_corr.abs().sort_values(ascending=False)
-print("Step 5: Identifying columns to drop...")
-columns_to_drop = sorted_corr[sorted_corr < 0.1].index
-print(f"Columns to drop: {list(columns_to_drop)}")
-print("Step 6: Dropping columns...")
-df_ml = df_cleaned.drop(columns=columns_to_drop, axis=1)
+df_ml = preprocess.prepare_dataset(df_cleaned)
+X_train, X_test, y_train, y_test,X_train_pca, X_test_pca, y_train_pca, y_test_pca = preprocess.split_data(df_ml)
 
-print(df_ml)
-# df_ml = preprocess.prepare_dataset(df_cleaned)
-# print(df_ml)
-
+# print(df_cleaned)
 # import train_models
 # import evaluate_model
 
