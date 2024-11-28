@@ -1,7 +1,7 @@
 #dictionary for database pathway
 database: 
-  # db_path: "../data/score.db" 
-  db_path: "/Users/shangweisong/Desktop/AIAP_Student_score/data/score.db"
+  db_path: "../data/score.db" 
+  # db_path: "/Users/shangweisong/Desktop/AIAP_Student_score/data/score.db"
 
 
 #dictionary for ml models,change "enabled" to false to disable training of specific model
