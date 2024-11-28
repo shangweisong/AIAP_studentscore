@@ -6,7 +6,7 @@ from sklearn.model_selection import GridSearchCV
 from xgboost import XGBRegressor
 import joblib
 
-def train_and_select_model(X_train, y_train, X_test, y_test):
+def train_and_select_model(X_train, y_train, X_test, y_test,config):
     
     models_config = config["models"]
     best_model = None

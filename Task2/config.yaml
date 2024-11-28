@@ -1,26 +1,29 @@
 #dictionary for database pathway
 database: 
-  db_path: "../data/score.db" 
+  # db_path: "../data/score.db" 
+  db_path: "/Users/shangweisong/Desktop/AIAP_Student_score/data/score.db"
+
 
 #dictionary for ml models,change "enabled" to false to disable training of specific model
 models:
-  Random Forest:
+  RandomForestRegressor:
     enabled: true
     params: 
       n_estimators: [50, 100, 200]
       max_depth: [None, 10, 20]
       min_samples_split: [2, 5]
       min_samples_leaf: [1, 2]
+
   LinearRegression:
     enabled: true 
     params: {} #not hyperparameters to tune
-  SVM: 
+  SVR: 
     enabled: true
     params: 
       kernel: ['linear', 'poly', 'rbf']
       C: [0.1, 1, 10]
       gamma: ['scale', 'auto']
-  XgBoost: 
+  XGBRegressor: 
     enabled: true
     params:
       n_estimators: [50, 100, 200]
@@ -59,6 +62,7 @@ preprocessing:
   drop_na: true
   scale_numerical: true
   encode_categorical: true
+  convert_bool: true
 
   pca:
     enabled: true

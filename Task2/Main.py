@@ -4,9 +4,11 @@ import utils.preprocess as preprocess
 import utils.train_models as train_models
 import utils.visualisation as vs
 from setup import load_config
+import os
+
 
 # load yaml config
-config = load_config("config.yaml")
+config = load_config()
 
 # connect to sql database
 db_path = config["database"]["db_path"]
@@ -21,7 +23,7 @@ df_query = f"SELECT * FROM {tablename.iloc[0,0]};"
 df= pd.read_sql_query(df_query, conn)
 
 # Data processing
-df_cleaned, scaler= preprocess.preprocess_data(df)
+df_cleaned, scaler= preprocess.preprocess_data(df,config)
 # prepare dataset used for ml
 df_ml = preprocess.prepare_dataset(df_cleaned)
 X_train, X_test, y_train, y_test,X_train_pca, X_test_pca, y_train_pca, y_test_pca = preprocess.split_data(df_ml)

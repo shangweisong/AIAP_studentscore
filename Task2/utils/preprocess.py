@@ -6,15 +6,18 @@ import numpy as np
 from sklearn.decomposition import PCA
 
 
-
-def preprocess_data(data):
+def preprocess_data(data, config):
+    preprocessing_config= config['preprocessing']
     if not isinstance(data, pd.DataFrame):
         raise ValueError("Input data must be a pandas DataFrame.")
-
+    
+    if preprocessing_config['drop_na']:
+        data = data.dropna()
     # drop duplicate, drop null and change strings to lowercase
-    data = data.dropna()
+    if preprocessing_config['drop_duplicates']:
+        data = data.drop_duplicates()
+    
     data = data.apply(lambda col: col.str.lower() if col.dtype == 'object' else col)
-    data = data.drop_duplicates()
     # replace single alphabet replies to yes and no
     data['tuition'] = data['tuition'].replace({'y': 'yes', 'n': 'no'})
     # drop unique identifier (student_id)
@@ -23,21 +26,23 @@ def preprocess_data(data):
     data = sleep_hours(data)
 
     # Standardisation and one-hotencoding
-    scaler = StandardScaler()
-    numerical_cols = data.select_dtypes(include=['float64', 'int64']).columns
-    data[numerical_cols] = scaler.fit_transform(data[numerical_cols])
-
-    # Identify categorical columns and one-hot encoding subsequently
-    categorical_cols = data.select_dtypes(include=['object','category']).columns
-    data = pd.get_dummies(data, columns= categorical_cols, drop_first=True)
-    # convert true and false to 0 and 1
-    bool_columns = data.select_dtypes(include=['bool']).columns
-    data[bool_columns] = data[bool_columns].astype(int)
+    if preprocessing_config['scale_numerical']:
+        numerical_cols = data.select_dtypes(include=['float64', 'int64']).columns
+        scaler = StandardScaler()
+        data[numerical_cols] = scaler.fit_transform(data[numerical_cols])
     
-    # Encode categorical variables if necessary
+    if preprocessing_config['encode_categorical']:
+        categorical_cols = data.select_dtypes(include=['object','category']).columns
+        data = pd.get_dummies(data, columns= categorical_cols, drop_first=True)
+        # convert true and false to 0 and 1
     le = LabelEncoder()
     if 'your_categorical_column' in data.columns:  # Replace with actual column names
         data['your_categorical_column'] = le.fit_transform(data['your_categorical_column'])
+
+    if preprocessing_config['convert_bool']:
+        bool_columns = data.select_dtypes(include=['bool']).columns
+        data[bool_columns] = data[bool_columns].astype(int)
+    # Encode categorical variables if necessary
     
     return data, scaler
 
