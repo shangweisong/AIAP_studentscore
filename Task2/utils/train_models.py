@@ -7,53 +7,23 @@ from xgboost import XGBRegressor
 import joblib
 
 def train_and_select_model(X_train, y_train, X_test, y_test):
-    # Define models and their hyperparameter grids
-    param_grids = {
-        'Random Forest': {
-            'model': RandomForestRegressor(random_state=42),
-            'params': {
-                'n_estimators': [50, 100, 200],
-                'max_depth': [None, 10, 20],
-                'min_samples_split': [2, 5],
-                'min_samples_leaf': [1, 2],
-            }
-        },
-        'Linear Regression': {
-            'model': LinearRegression(),
-            'params': {}  # No hyperparameters for LinearRegression
-        },
-        'Support Vector Machine': {
-            'model': SVR(),
-            'params': {
-                'kernel': ['linear', 'poly', 'rbf'],
-                'C': [0.1, 1, 10],
-                'gamma': ['scale', 'auto']
-            }
-        },
-        'XGBoost': {
-            'model': XGBRegressor(random_state=42, verbosity=0),  # Suppress training logs
-            'params': {
-                'n_estimators': [50, 100, 200],
-                'max_depth': [3, 5, 7],
-                'learning_rate': [0.01, 0.1, 0.2],
-                'subsample': [0.8, 1.0],
-                'colsample_bytree': [0.8, 1.0]
-            }
-        }
-    }
-
+    
+    models_config = config["models"]
     best_model = None
     best_model_name = None
     best_r2_score = float('-inf')  # Start with a very low score
     lowest_mse= float('inf')
     model_results=[]
 
-    # Iterate through models and perform GridSearchCV
-    for model_name, config in param_grids.items():
-        print(f"Tuning {model_name}...")
-        model = config['model']
-        param_grid = config['params']
-        
+    for model_name, model_info in models_config.items():
+        if not model_info["enabled"]:
+            print(f"Skipping {model_name} (disabled in config).")
+            continue
+     
+        print(f"Training {model_name}...")
+        model = eval(f"{model_name.replace(' ', '')}()")  # Dynamically initialize model
+        param_grid = model_info["params"]
+
         if param_grid:  # Perform GridSearch only if there are parameters to tune
             grid_search = GridSearchCV(
                 estimator=model,
