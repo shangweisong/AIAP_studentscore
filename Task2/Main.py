@@ -3,7 +3,10 @@ import pandas as pd
 import utils.preprocess as preprocess
 import utils.train_models as train_models
 import utils.visualisation as vs
+from setup import load_config
 
+
+config = load_config("config.yaml")
 # connect to sql database
 db_path = "/Users/shangweisong/Desktop/AIAP_Student_score/data/score.db"
 conn = sqlite3.connect(db_path)
