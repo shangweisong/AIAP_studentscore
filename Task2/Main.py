@@ -28,17 +28,20 @@ X_train, X_test, y_train, y_test,X_train_pca, X_test_pca, y_train_pca, y_test_pc
 
 # Train models and select the best one
 print("Training and selecting the best model...")
-best_model, best_model_name, model_results = train_models.train_and_select_model(X_train, y_train, X_test, y_test)
+best_model, best_model_name, model_results = train_models.train_and_select_model(X_train, y_train, X_test, y_test, config)
 
 print("Saving the best model...")
 train_models.save_model(best_model, "best_model.pkl")
 
 # visualise results
 print("Visualizing results...")
-vs.plot_r2_scores(model_results)  # Pass model R² results
-y_pred = best_model.predict(X_test)
-vs.plot_residuals(y_test, y_pred, best_model_name)
-vs.plot_predicted_vs_actual(y_test, y_pred, best_model_name)
+if config["visualization"]["plot_r2_scores"]:
+    vs.plot_r2_scores(model_results)
+if config["visualization"]["plot_residuals"]:
+    y_pred = best_model.predict(X_test)
+    vs.plot_residuals(y_test, y_pred, best_model_name)
+if config["visualization"]["plot_predicted_vs_actual"]:
+    vs.plot_predicted_vs_actual(y_test, y_pred, best_model_name)
 
 
 
